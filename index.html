@@ -1,0 +1,718 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> 
+    <title>Mosaic created by AndreaMosaic</title>
+    <link rel="stylesheet" href="app/leaflet.css" />
+    <link rel="stylesheet" href="app/Control.FullScreen.css" />
+    <link rel="stylesheet" href="app/easy-button.css" />
+    <link rel="stylesheet" href="app/help-table.css" />
+    <link rel="stylesheet" href="app/leaflet-search.css" />
+    <style type="text/css">
+        html, body, #AndreaMosaic {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="AndreaMosaic"></div>
+    <script src="app/leaflet.js"></script>
+    <script src="app/leafletzoom.js"></script>  
+    <script src="app/Control.FullScreen.js"></script>  
+    <script src="app/easy-button.js"></script>  
+    <script src="app/leaflet-search.js"></script>
+    <script type="application/javascript">
+        // TileArrays is an array of the tiles. It is needed for getPopUpText, getHelpText, getSearchText. Can be null.
+        // Each tileArray item has mandatory the first 4 elements defined as x,y,width,height in pixels of the tile position.
+        // Other elements in the array are optional and custom defined. See getTileObject.
+        // For mosaics with many tiles this array should have as few elements as possible or even not defined at all.
+        // With a very large amount of tiles it is suggested to store this list on the server and retrieve the tile 
+        // on demand in getTileObject.
+        var tileArrays = [
+			// tileX, tileY, tileWidth, tileHeight, tileNr, imageNr, imageUsageCount, imageUrl, imageName, imageExtension
+			[0,0,210,157,236,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,1101,51,157,485,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,1258,208,157,330,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,1415,155,210,333,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,157,157,210,310,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,1625,155,157,336,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,1782,102,210,488,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,1992,102,157,346,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,2149,49,210,491,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,2359,49,157,493,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,2516,206,157,362,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,2673,153,210,373,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,2883,153,157,383,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,3040,100,210,496,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,3250,100,157,402,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,3407,47,210,499,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,3617,47,157,501,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,367,157,157,108,14,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6499.PNG","IMG_6499","PNG"],
+			[0,3774,204,157,421,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,3931,151,210,430,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,4141,151,157,436,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,4298,98,210,504,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,4508,98,157,505,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,4665,45,210,507,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,4875,45,157,508,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,5032,202,157,453,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,5189,149,210,458,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,524,104,210,481,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,5399,149,157,463,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,5556,96,210,512,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,5766,96,157,513,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,5923,43,77,515,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[0,734,104,157,325,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[0,891,51,210,483,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[100,3040,210,157,384,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[100,3197,157,210,393,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[102,1782,210,157,337,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[102,1939,157,210,340,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[104,524,210,157,317,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[104,681,157,210,322,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1040,5240,210,157,159,25,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7660.PNG","IMG_7660","PNG"],
+			[1040,5397,157,210,230,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1042,3982,210,157,385,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1042,4139,157,210,395,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1044,2724,210,157,45,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1044,2881,157,210,50,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1046,1466,210,157,537,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[1046,1623,157,210,20,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1048,208,210,157,264,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1048,365,157,210,258,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1093,4873,210,157,157,24,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7659.jpg","IMG_7659","jpg"],
+			[1093,5030,157,210,158,24,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7659.jpg","IMG_7659","jpg"],
+			[1095,3615,210,157,177,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1095,3772,157,210,178,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1097,2357,210,157,32,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1097,2514,157,210,38,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1099,1099,210,157,161,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[1099,1256,157,210,235,40,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9338.PNG","IMG_9338","PNG"],
+			[1101,0,157,208,271,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1144,5764,210,157,506,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[1144,5921,157,79,534,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[1146,4506,210,157,409,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1146,4663,157,210,2,1,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7007.PNG","IMG_7007","PNG"],
+			[1148,3248,210,157,55,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1148,3405,157,210,137,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1150,1990,210,157,136,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1150,2147,157,210,27,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1152,732,210,157,253,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1152,889,157,210,248,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1197,5397,210,157,154,23,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7657.PNG","IMG_7657","PNG"],
+			[1197,5554,157,210,167,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[1199,4139,210,157,386,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1199,4296,157,210,396,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1201,2881,210,157,46,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1201,3038,157,210,51,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1203,1623,210,157,104,11,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6378.PNG","IMG_6378","PNG"],
+			[1203,1780,157,210,134,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1205,365,210,157,265,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1205,522,157,210,259,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1250,5030,210,157,171,28,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8042.jpg","IMG_8042","jpg"],
+			[1250,5187,157,210,117,16,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8040.jpg","IMG_8040","jpg"],
+			[1252,3772,210,157,363,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1252,3929,157,210,375,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1254,2514,210,157,33,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1254,2671,157,210,39,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1256,1256,210,157,126,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1256,1413,157,210,521,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[1258,0,210,155,280,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1258,155,157,210,272,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1301,5921,210,79,533,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[1303,4663,210,157,208,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1303,4820,157,210,234,39,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8585.PNG","IMG_8585","PNG"],
+			[1305,3405,210,157,204,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1305,3562,157,210,205,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1307,2147,210,157,23,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1307,2304,157,210,224,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1309,1046,157,210,1,1,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7007.PNG","IMG_7007","PNG"],
+			[1309,889,210,157,254,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1354,5554,210,157,75,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[1354,5711,157,210,210,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1356,4296,210,157,387,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1356,4453,157,210,397,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1358,3038,210,157,47,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1358,3195,157,210,101,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[1360,1780,210,157,215,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1360,1937,157,210,216,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1362,522,210,157,266,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1362,679,157,210,260,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1407,5187,210,157,143,20,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7892.PNG","IMG_7892","PNG"],
+			[1407,5344,157,210,113,15,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6204.PNG","IMG_6204","PNG"],
+			[1409,3929,210,157,364,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1409,4086,157,210,376,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1411,2671,210,157,186,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[1411,2828,157,210,40,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1413,1413,210,157,536,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[1413,1570,157,210,130,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1415,155,210,157,281,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1415,312,157,210,273,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1460,4820,210,157,228,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1460,4977,157,210,67,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1462,3562,210,157,348,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1462,3719,157,210,355,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1464,2304,210,157,220,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1464,2461,157,210,225,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1466,1046,210,157,201,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1466,1203,157,210,200,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1468,0,157,155,107,14,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6499.PNG","IMG_6499","PNG"],
+			[149,5189,210,157,454,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[149,5346,157,210,459,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[151,3931,210,157,422,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[151,4088,157,210,431,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1511,5711,210,157,197,34,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9399.jpg","IMG_9399","jpg"],
+			[1511,5868,157,132,85,6,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6946.PNG","IMG_6946","PNG"],
+			[1513,4453,210,157,388,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1513,4610,157,210,207,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1515,3195,210,157,198,35,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9276.PNG","IMG_9276","PNG"],
+			[1515,3352,157,210,341,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1517,1937,210,157,181,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[1517,2094,157,210,217,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1519,679,210,157,267,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1519,836,157,210,261,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[153,2673,210,157,122,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[153,2830,157,210,374,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[155,1415,210,157,120,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[155,1572,157,210,334,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1564,5344,210,157,427,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1564,5501,157,210,4,1,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7007.PNG","IMG_7007","PNG"],
+			[1566,4086,210,157,365,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1566,4243,157,210,377,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1568,2828,210,157,34,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1568,2985,157,210,187,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[157,157,210,157,160,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[157,314,157,210,311,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1570,1570,210,157,11,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1570,1727,157,210,131,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1572,312,210,157,282,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1572,469,157,210,274,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1617,4977,210,157,229,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1617,5134,157,210,125,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[1619,3719,210,157,121,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[1619,3876,157,210,146,22,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7891.PNG","IMG_7891","PNG"],
+			[1621,2461,210,157,24,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1621,2618,157,210,28,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1623,1203,210,157,127,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1623,1360,157,210,14,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1625,0,210,102,474,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[1625,102,157,210,289,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1668,5868,210,132,84,6,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6946.PNG","IMG_6946","PNG"],
+			[1670,4610,210,157,389,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1670,4767,157,210,138,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1672,3352,210,157,174,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1672,3509,157,210,89,8,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7557.PNG","IMG_7557","PNG"],
+			[1674,2094,210,157,538,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[1674,2251,157,210,516,43,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9243.PNG","IMG_9243","PNG"],
+			[1676,836,210,157,268,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1676,993,157,210,202,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1721,5501,210,157,209,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[1721,5658,157,210,73,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[1723,4243,210,157,366,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1723,4400,157,210,378,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1725,2985,210,157,543,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[1725,3142,157,210,41,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1727,1727,210,157,12,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1727,1884,157,210,18,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1729,469,210,157,283,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1729,626,157,210,275,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1774,5134,210,157,139,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1774,5291,157,210,150,22,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7891.PNG","IMG_7891","PNG"],
+			[1776,3876,210,157,528,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[1776,4033,157,210,356,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1778,2618,210,157,221,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1778,2775,157,210,184,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[1780,1360,210,157,213,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1780,1517,157,210,211,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1782,102,210,157,296,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1782,259,157,210,290,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1827,4767,210,157,531,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[1827,4924,157,210,88,7,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7449.jpg","IMG_7449","jpg"],
+			[1829,3509,210,157,227,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1829,3666,157,210,188,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[1831,2251,210,157,182,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[1831,2408,157,210,135,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1833,1150,157,210,129,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1833,993,210,157,269,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1835,0,157,102,302,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1878,5658,210,157,428,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1878,5815,157,185,435,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1880,4400,210,157,367,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1880,4557,157,210,379,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1882,3142,210,157,226,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1882,3299,157,210,42,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1884,1884,210,157,13,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1884,2041,157,210,214,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1886,626,210,157,284,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1886,783,157,210,276,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1931,5291,210,157,180,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1931,5448,157,210,418,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1933,4033,210,157,349,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1933,4190,157,210,357,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1935,2775,210,157,183,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[1935,2932,157,210,29,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1937,1517,210,157,128,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[1937,1674,157,210,212,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[1939,259,210,157,297,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1939,416,157,210,291,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[1984,4924,210,157,124,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[1984,5081,157,210,194,32,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9486.jpg","IMG_9486","jpg"],
+			[1986,3666,210,157,175,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1986,3823,157,210,176,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1988,2408,210,157,172,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[1988,2565,157,210,21,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1990,1150,210,157,141,20,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7892.PNG","IMG_7892","PNG"],
+			[1990,1307,157,210,17,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[1992,0,210,49,476,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[1992,49,157,210,169,27,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8162.PNG","IMG_8162","PNG"],
+			[202,4822,210,157,445,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[202,4979,157,210,450,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2035,5815,210,157,429,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2035,5972,157,28,503,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2037,4557,210,157,368,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2037,4714,157,210,79,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[2039,3299,210,157,100,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[2039,3456,157,210,526,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[204,3564,210,157,191,31,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9812.PNG","IMG_9812","PNG"],
+			[204,3721,157,210,148,22,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7891.PNG","IMG_7891","PNG"],
+			[2041,2041,210,157,96,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[2041,2198,157,210,522,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2043,783,210,157,285,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2043,940,157,210,277,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[206,2306,210,157,102,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[206,2463,157,210,529,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[208,1048,210,157,78,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[208,1205,157,210,524,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2088,5448,210,157,410,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2088,5605,157,210,419,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2090,4190,210,157,350,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2090,4347,157,210,358,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2092,2932,210,157,145,21,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7717.PNG","IMG_7717","PNG"],
+			[2092,3089,157,210,525,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2094,1674,210,157,144,21,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7717.PNG","IMG_7717","PNG"],
+			[2094,1831,157,210,518,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2096,416,210,157,298,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2096,573,157,210,292,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[210,0,157,157,162,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[2141,5081,210,157,390,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2141,5238,157,210,398,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2143,3823,210,157,10,2,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7359.JPG","IMG_7359","JPG"],
+			[2143,3980,157,210,342,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2145,2565,210,157,99,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[2145,2722,157,210,523,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2147,1307,210,157,98,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[2147,1464,157,210,520,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2149,206,157,210,112,15,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6204.PNG","IMG_6204","PNG"],
+			[2149,49,210,157,196,34,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9399.jpg","IMG_9399","jpg"],
+			[2192,5972,210,28,502,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2194,4714,210,157,369,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2194,4871,157,210,380,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2196,3456,210,157,72,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[2196,3613,157,210,116,16,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8040.jpg","IMG_8040","jpg"],
+			[2198,2198,210,157,151,23,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7657.PNG","IMG_7657","PNG"],
+			[2198,2355,157,210,114,16,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8040.jpg","IMG_8040","jpg"],
+			[2200,1097,157,210,278,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2200,940,210,157,286,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2202,0,157,49,477,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2245,5605,210,157,411,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2245,5762,157,210,420,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2247,4347,210,157,351,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2247,4504,157,210,359,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2249,3089,210,157,92,9,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6565.PNG","IMG_6565","PNG"],
+			[2249,3246,157,210,93,9,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6565.PNG","IMG_6565","PNG"],
+			[2251,1831,210,157,16,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[2251,1988,157,210,15,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[2253,573,210,157,299,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2253,730,157,210,293,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2298,5238,210,157,391,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2298,5395,157,210,399,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2300,3980,210,157,338,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2300,4137,157,210,343,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2302,2722,210,157,70,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[2302,2879,157,210,91,9,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6565.PNG","IMG_6565","PNG"],
+			[2304,1464,210,157,69,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[2304,1621,157,210,90,9,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6565.PNG","IMG_6565","PNG"],
+			[2306,206,210,157,77,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[2306,363,157,210,303,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2351,4871,210,157,370,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2351,5028,157,210,381,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2353,3613,210,157,153,23,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7657.PNG","IMG_7657","PNG"],
+			[2353,3770,157,210,9,2,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7359.JPG","IMG_7359","JPG"],
+			[2355,2355,210,157,152,23,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7657.PNG","IMG_7657","PNG"],
+			[2355,2512,157,210,7,2,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7359.JPG","IMG_7359","JPG"],
+			[2357,1097,210,157,165,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[2357,1254,157,210,5,2,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7359.JPG","IMG_7359","JPG"],
+			[2359,0,157,206,170,27,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8162.PNG","IMG_8162","PNG"],
+			[2402,5762,210,157,412,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2402,5919,157,81,500,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2404,4504,210,157,352,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2404,4661,157,210,360,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2406,3246,210,157,71,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[2406,3403,157,210,115,16,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8040.jpg","IMG_8040","jpg"],
+			[2408,1988,210,157,68,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[2408,2145,157,210,519,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[2410,730,210,157,300,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2410,887,157,210,294,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2455,5395,210,157,392,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2455,5552,157,210,400,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2457,4137,210,157,339,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2457,4294,157,210,344,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2459,2879,210,157,119,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[2459,3036,157,210,231,39,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8585.PNG","IMG_8585","PNG"],
+			[2461,1621,210,157,118,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[2461,1778,157,210,76,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[2463,363,210,157,306,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2463,520,157,210,304,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2508,5028,210,157,371,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2508,5185,157,210,382,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2510,3770,210,157,331,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2510,3927,157,210,335,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2512,2512,210,157,242,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2512,2669,157,210,316,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2514,1254,210,157,287,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2514,1411,157,210,279,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2516,0,210,153,308,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2516,153,157,210,6,2,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7359.JPG","IMG_7359","JPG"],
+			[253,5713,210,157,465,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[253,5870,157,130,467,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[255,4455,210,157,438,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[255,4612,157,210,441,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2559,5919,210,81,498,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2561,4661,210,157,353,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2561,4818,157,210,361,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2563,3403,209,157,327,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2563,3560,157,210,329,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2565,2145,207,157,255,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2565,2302,157,210,249,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2567,1044,157,210,295,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2567,887,205,157,301,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[257,3197,210,157,179,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[257,3354,157,210,83,6,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6946.PNG","IMG_6946","PNG"],
+			[259,1939,210,157,173,29,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8469.PNG","IMG_8469","PNG"],
+			[259,2096,157,210,527,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[261,681,210,157,318,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[261,838,157,210,323,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2612,5552,160,157,110,14,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6499.PNG","IMG_6499","PNG"],
+			[2612,5709,157,210,401,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2614,4294,158,157,109,14,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6499.PNG","IMG_6499","PNG"],
+			[2614,4451,157,210,345,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2616,3036,156,157,321,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2616,3193,156,210,324,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2618,1778,154,157,270,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2618,1935,154,210,262,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2620,520,152,157,307,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2620,677,152,210,305,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2665,5185,107,157,372,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2665,5342,107,210,494,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2667,3927,105,157,332,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2667,4084,105,210,486,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2669,2669,103,157,243,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2669,2826,103,210,480,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2671,1411,101,157,288,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2671,1568,101,210,472,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2673,153,99,157,309,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[2673,310,99,210,478,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2718,4818,54,157,490,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2718,4975,54,210,492,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2720,3560,52,157,482,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2720,3717,52,210,484,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2722,2302,50,157,469,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2722,2459,50,210,468,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2724,1044,48,157,475,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2724,1201,48,210,473,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2726,0,46,153,479,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2769,5709,3,157,495,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2769,5866,3,134,497,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2771,4451,1,157,487,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[2771,4608,1,210,489,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[306,5346,210,157,455,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[306,5503,157,210,460,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[308,4088,210,157,423,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[308,4245,157,210,432,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[310,2830,210,157,59,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[310,2987,157,210,62,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[312,1572,210,157,30,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[312,1729,157,210,35,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[314,314,210,157,237,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[314,471,157,210,312,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[359,4979,210,157,446,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[359,5136,157,210,451,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[361,3721,210,157,404,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[361,3878,157,210,149,22,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7891.PNG","IMG_7891","PNG"],
+			[363,2463,210,157,52,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[363,2620,157,210,56,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[365,1205,210,157,86,7,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7449.jpg","IMG_7449","jpg"],
+			[365,1362,157,210,222,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[367,0,210,104,163,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[367,104,157,210,97,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[410,5870,210,130,511,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[412,4612,210,157,439,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[412,4769,157,210,442,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[414,3354,210,157,65,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[414,3511,157,210,80,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[416,2096,210,157,43,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[416,2253,157,210,48,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[418,838,210,157,319,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[418,995,157,210,203,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[43,5923,210,77,514,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[45,4665,210,157,444,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[45,4822,157,210,449,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[463,5503,210,157,456,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[463,5660,157,210,461,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[465,4245,210,157,424,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[465,4402,157,210,433,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[467,2987,210,157,60,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[467,3144,157,210,63,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[469,1729,210,157,31,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[469,1886,157,210,36,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[47,3407,210,157,403,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[47,3564,157,210,413,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[471,471,210,157,238,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[471,628,157,210,313,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[49,2149,210,157,347,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[49,2306,157,210,354,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[51,1048,157,210,328,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[51,891,210,157,326,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[516,5136,210,157,447,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[516,5293,157,210,452,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[518,3878,210,157,405,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[518,4035,157,210,414,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[520,2620,210,157,189,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[520,2777,157,210,57,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[522,1362,210,157,218,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[522,1519,157,210,540,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[524,104,210,157,195,33,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9811.PNG","IMG_9811","PNG"],
+			[524,261,157,210,244,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[569,4769,210,157,166,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[569,4926,157,210,443,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[571,3511,210,157,66,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[571,3668,157,210,111,14,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6499.PNG","IMG_6499","PNG"],
+			[573,2253,210,157,544,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[573,2410,157,210,87,7,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7449.jpg","IMG_7449","jpg"],
+			[575,1152,157,210,132,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[575,995,210,157,320,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[577,0,157,104,164,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[620,5660,210,157,457,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[620,5817,157,183,462,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[622,4402,210,157,425,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[622,4559,157,210,434,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[624,3144,210,157,61,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[624,3301,157,210,64,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[626,1886,210,157,541,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[626,2043,157,210,140,19,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7942.PNG","IMG_7942","PNG"],
+			[628,628,210,157,239,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[628,785,157,210,314,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[673,5293,210,157,448,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[673,5450,157,210,82,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[675,4035,210,157,406,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[675,4192,157,210,415,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[677,2777,210,157,53,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[677,2934,157,210,58,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[679,1519,210,157,219,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[679,1676,157,210,25,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[681,261,210,157,250,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[681,418,157,210,245,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[726,4926,210,157,94,9,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6565.PNG","IMG_6565","PNG"],
+			[726,5083,157,210,106,13,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6500.PNG","IMG_6500","PNG"],
+			[728,3668,210,157,206,37,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9174.jpg","IMG_9174","jpg"],
+			[728,3825,157,210,147,22,5,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7891.PNG","IMG_7891","PNG"],
+			[730,2410,210,157,44,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[730,2567,157,210,49,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[732,1152,210,157,8,2,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7359.JPG","IMG_7359","JPG"],
+			[732,1309,157,210,133,18,14,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8041.jpg","IMG_8041","jpg"],
+			[734,0,210,51,470,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[734,51,157,210,256,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[777,5817,210,157,168,26,9,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8107.PNG","IMG_8107","PNG"],
+			[777,5974,157,26,510,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[779,4559,210,157,426,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[779,4716,157,210,3,1,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7007.PNG","IMG_7007","PNG"],
+			[781,3301,210,157,123,17,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7940.PNG","IMG_7940","PNG"],
+			[781,3458,157,210,233,39,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8585.PNG","IMG_8585","PNG"],
+			[783,2043,210,157,185,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[783,2200,157,210,37,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[785,785,210,157,240,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[785,942,157,210,315,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[830,5450,210,157,95,9,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6565.PNG","IMG_6565","PNG"],
+			[830,5607,157,210,156,23,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7657.PNG","IMG_7657","PNG"],
+			[832,4192,210,157,407,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[832,4349,157,210,416,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[834,2934,210,157,546,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[834,3091,157,210,232,39,4,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8585.PNG","IMG_8585","PNG"],
+			[836,1676,210,157,22,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[836,1833,157,210,26,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[838,418,210,157,251,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[838,575,157,210,246,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[883,5083,210,157,74,4,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6760.PNG","IMG_6760","PNG"],
+			[883,5240,157,210,81,5,7,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7607.PNG","IMG_7607","PNG"],
+			[885,3825,210,157,142,20,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7892.PNG","IMG_7892","PNG"],
+			[885,3982,157,210,394,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[887,2567,210,157,545,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[887,2724,157,210,192,32,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9486.jpg","IMG_9486","jpg"],
+			[889,1309,210,157,535,45,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8651.PNG","IMG_8651","PNG"],
+			[889,1466,157,210,19,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[891,208,157,210,257,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[891,51,210,157,263,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[934,5974,210,26,509,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[936,4716,210,157,532,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[936,4873,157,210,190,30,10,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8158.PNG","IMG_8158","PNG"],
+			[938,3458,210,157,103,10,8,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6944.PNG","IMG_6944","PNG"],
+			[938,3615,157,210,530,44,17,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9175.jpg","IMG_9175","jpg"],
+			[940,2200,210,157,542,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[940,2357,157,210,517,43,2,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9243.PNG","IMG_9243","PNG"],
+			[942,1099,157,210,105,12,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_6410.PNG","IMG_6410","PNG"],
+			[942,942,210,157,241,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[944,0,157,51,471,42,48,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_8676.PNG","IMG_8676","PNG"],
+			[96,5556,210,157,464,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[96,5713,157,210,466,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[98,4298,210,157,437,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[98,4455,157,210,440,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[987,5607,210,157,155,23,6,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7657.PNG","IMG_7657","PNG"],
+			[987,5764,157,210,199,36,1,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9176.jpg","IMG_9176","jpg"],
+			[989,4349,210,157,408,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[989,4506,157,210,417,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[991,3091,210,157,54,3,57,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_7499.PNG","IMG_7499","PNG"],
+			[991,3248,157,210,193,32,3,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9486.jpg","IMG_9486","jpg"],
+			[993,1833,210,157,539,46,11,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9233.PNG","IMG_9233","PNG"],
+			[993,1990,157,210,223,38,20,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9216.PNG","IMG_9216","PNG"],
+			[995,575,210,157,252,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+			[995,732,157,210,247,41,232,"file:///C:/Users/Oscar/Desktop/Share/Charle/IMG_9398.jpg","IMG_9398","jpg"],
+		];
+
+        // Get the tile at the specified position x,y in pixels
+        var getTileObject = function (x,y) {
+            var l = tileArrays.length;
+            for (n=0; n<l; ++n) {
+                tileInfo = tileArrays[n];
+                if (tileInfo[0] <= x && tileInfo[0]+tileInfo[2] >= x && tileInfo[1] <= y && tileInfo[1]+tileInfo[3] >= y) {
+                    return { 
+                        tileLeft:tileInfo[0],
+                        tileTop:tileInfo[1],
+                        tileWidth:tileInfo[2],
+                        tileHeight:tileInfo[3],
+                        tileRight:tileInfo[0]+tileInfo[1],
+                        tileBottom:tileInfo[2]+tileInfo[3],
+                        tileNr:tileInfo[4],
+                        imageNr:tileInfo[5],
+                        imageUsageCount:tileInfo[6],
+                        imageUrl:tileInfo[7],
+                        imageName:tileInfo[8],
+                        imageExtension:tileInfo[9],
+                    };
+                }
+            }
+            return null; // not found
+        }
+
+        var showPopUpWindow = function(popUpText, callback) {
+            callback.showPopUp({maxWidth:300, popUpText:popUpText}, callback.args);
+        }
+
+        // This function builds the PopUp window information for the specified Tile. 
+        // Returns an object with following members:
+        //  maxWidth: maximum width of the popup window.
+        //  popUpText: HTML text to show in the popup window.
+        var getPopUpFullText = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null ? "No information available" :
+                        (tile.imageUrl == null? '' : '<a href="' + tile.imageUrl + '" target="TileImage"><img src="' + tile.imageUrl + '" width=300 /><br></a>')
+                        + 'Tile Nr.: ' + tile.tileNr + '<br>'
+                        + 'Tile Size: ' + tile.tileWidth + ' x ' + tile.tileHeight + '<br>'
+                        + 'Tile Position: ' + tile.tileLeft + ' x ' + tile.tileTop + '<br>'
+                        + 'Image Nr.: ' + tile.imageNr + '<br>'
+                        + 'Image Name: ' + tile.imageName + '<br>'
+                        + 'Image Extension: ' + tile.imageExtension + '<br>'
+                        + 'Image Usage Count: ' + tile.imageUsageCount + '<br>';
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // PopUp showing only the image
+        var getPopUpImageOnly = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null || tile.imageUrl === null ? "No information available" : '<a href="' + tile.imageUrl + '" target="TileImage"><img src="' + tile.imageUrl + '" width=300 /><br></a>';
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // PopUp showing the image with name and usage count
+        var getPopUpImageWithName = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null || tile.imageUrl === null ? "No information available" : '<a href="' + tile.imageUrl + '" target="TileImage"><img src="' + tile.imageUrl + '" width=300 /><br></a>' 
+                + '<center>' + tile.imageName + ' (used ' + tile.imageUsageCount + ' times)</center>';
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // PopUp showing only ImageNr
+        var getPopUpTextOnly = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null || tile.imageUrl === null ? "No information available" : '<center>image #' + tile.imageNr + ' used ' + tile.imageUsageCount + ' times</center>'; 
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // Get the Help Text to show when clicking on the ? button
+        var getHelpText = function () {
+            return {
+                maxWidth: 500,
+                minWidth: 300,
+                popUpText:    '<table class="help-table"><thead><tr><th></th><th>Mouse</th><th>Touchscreen</th><th>Keyboard</th></tr></thead><tbody>' 
+                            + '<tr><td>Zoom In</td><td>Wheel or Doubleclick</td><td>Enlarge with two Fingers</td><td>+</td></tr><tr>'
+                            + '<tr><td>Zoom Out</td><td>Wheel or Shift + Doubleclick</td><td>Reduce with two Fingers</td><td>-</td></tr><tr>'
+                            + '<tr><td>Pan</td><td>Left Click + Move</td><td>Short Press + Move</td><td>Arrow Keys</td></tr><tr>'
+                            + '<tr><td>Show Info</td><td>Right Click</td><td>Long Press</td><td></td></tr><tr>'
+                            + '<tr><td>Hide Info</td><td>Left Click on map</td><td>Short Press on map</td><td>Esc</td></tr><tr>'
+                            + '<tr><td>Zoom area</td><td>Left Click + Shift + Move</td><td></td><td></td></tr><tr>'
+                            + '</tbody></table>',
+            }
+        }; 
+
+        // This function builds the search text.
+        // This function is invoked once when loading the mosaic.
+        // It returns an array with 3 elements: x,y,title.
+        // If two tiles have the same title then it will be displayed only once in the search list.
+        var getSearchText = function () {
+            var l = tileArrays.length;
+            var searchList = new Array(l);
+            for (n=0; n<l; ++n) {
+                tileInfo = tileArrays[n];
+                searchList[n] = [tileInfo[0]+tileInfo[2]/2, tileInfo[1]+tileInfo[3]/2, tileInfo[8]];
+            }
+            return searchList;
+        };
+
+        // Map Options
+        var mapOptions = {
+            getPopUpText: getPopUpFullText, // function that retrieves the HTML text to show for a tile. Can be null to avoid popup.
+            getHelpText: getHelpText, // function that retrieves the HTML text to show as PopUp for a help. (can be null to hide the ? button)
+            attribution: "Mosaic created by AndreaMosaic", // set my own attribution text, as html text. Can be null to have no additional attribution.
+            keepPopUpInView: true, // if true the map will autopan so that the popup window is awlays shown.
+            fullscreenControl: !navigator.vendor.match(/apple/i),
+            getSearchText: getSearchText,    // function that retrieves the text of each tile that will be searched. Null to avoid search.
+            searchMiddleOfText: true, // false: search elements only by initial text
+            searchCaseInsensitive: true, // false: search elements in case sensitive text
+            searchAutocomplete: true, // complete input with first suggested result and select this filled-in text.
+            searchAutoHideMarker: true, // remove circle and marker on search control collapsed
+            searchMarkerFound: null, // specify a L.Icon or null for the default
+            searchText:'Tile...', // text for the Search
+            searchTextError:'Tile not found',    //error message
+            searchTextCancel: 'Cancel',          //title in cancel button        
+            searchTextPlaceholder: 'Search Tile...',   //placeholder value         
+            searchContainer: '', // container id to insert Search Control
+            zoomControl: true, // false to not show a zoom control with +/- buttons
+            panInertia: null, // can be null, true or false. Inertia feels nice on touchscreen devices
+            panInertiaDeceleration: null, // can be null or a value in pixels/second.
+        };
+
+        // Show the Mosaic
+        ShowAndreaMosaic(
+            'AndreaMosaic', // Div ID
+            'mosaic/', // Base URL of the Mosaic Tiles
+            2772, // Width in Pixels
+            5999, // Height in Pixels
+            mapOptions
+            );
+    </script>
+</body>
+</html>
